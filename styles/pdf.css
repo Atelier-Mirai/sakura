@@ -1,0 +1,89 @@
+/* honoka */
+.book {
+  font-family: "YuGotic", "Open Sans", "Helvetica Neue", Helvetica, "Arial", "游ゴシック", YuGothic, "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+}
+
+/* h1 size == h2 size */
+.book .book-body .page-wrapper .page-inner section.normal h1 {
+    font-size: 1.75em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h1:only-child {
+    font-size: 4em;
+    text-align: center;
+    padding: 1em 0;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal h2:only-child {
+    font-size: 3em;
+    text-align: center;
+    padding: 1em 0;
+}
+
+/* http://www.adobe.com/jp/devnet/dreamweaver/articles/html5pack_css3_part5.html */
+h1.book_title {
+  font-family: "游ゴシック体", "Yu Gothic", YuGothic;
+  font-size:280% !important;
+  text-shadow:2px 2px 3px gray, 3px 3px 5px #030;
+  padding: 100px 0 50px 0;
+  text-align: center;
+  letter-spacing: 0.6em;
+}
+h1.book_title:first-letter {
+  font-size: 150%;
+}
+h2.book_title {
+  font-size: 128%;
+  margin: 0 0 30px 0;
+  /*<!-- font-family:'font2'; -->*/
+  text-shadow:2px 2px 2px #696;
+  text-align: center;
+  letter-spacing: 0.5em;
+}
+
+
+/**/
+.book .book-body .page-wrapper .page-inner section.normal h1, .book .book-body .page-wrapper .page-inner section.normal h2, .book .book-body .page-wrapper .page-inner section.normal h3, .book .book-body .page-wrapper .page-inner section.normal h4, .book .book-body .page-wrapper .page-inner section.normal h5, .book .book-body .page-wrapper .page-inner section.normal h6 {
+    margin-bottom: 0.1em;
+}
+
+/* expand width of inner*/
+.page-inner {
+    max-width: 85% !important;
+}
+
+/*
+Deckset like notation
+
+![right](img.png)
+![left](img.png)
+*/
+.book .book-body .page-wrapper .page-inner section.normal img[alt *="right"] {
+    float: right;
+    margin-left: 1.1em;
+    /* max image width */
+    max-width: 55%;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal img[alt *="left"] {
+    float: left;
+    margin-right: 1.1em;
+    /* max image width */
+    max-width: 55%;
+}
+
+/* img[left] img[right*/
+.book .book-body .page-wrapper .page-inner section.normal img[alt *="left"] + img[alt *="right"] {
+    box-sizing: border-box;
+    margin-left: 0;
+    max-width: 40%;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal img[alt *="center"] {
+    margin: 0 auto;
+    display: block;
+}
+
+.book {
+  font-family: "游ゴシック体", "Yu Gothic", YuGothic;
+}

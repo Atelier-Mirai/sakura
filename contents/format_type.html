@@ -1,0 +1,343 @@
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+
+<h2>出力用 フォーマット指定子 一覧</h2>
+<p>
+  フォーマット指定子とは、C言語のprintf()、fprintf()、sprintf()、scanf()、fscanf()、sscanf()などの関数で使用する、
+表示形式を指定するための記述子である。
+</p>
+<table>
+  <tr>
+    <th bgcolor="#ffffff">指定子</th>
+    <th bgcolor="#ffFFFF">対応する型</th>
+    <th bgcolor="#ffFFFF">説明</th>
+    <th bgcolor="#ffFFFF">使用例</th>
+  </tr>
+  <tr>
+    <th class="bg_green">%c</th>
+    <td class="bg_cyan">char</td>
+    <td class="bg_cyan">１文字を出力する</td>
+    <td class="bg_cyan">"%c"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%s</th>
+    <td class="bg_cyan">char *</td>
+    <td class="bg_cyan">文字列を出力する</td>
+    <td class="bg_cyan">"%8s", "%-10s"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%d</th>
+    <td class="bg_cyan">char, int, short</td>
+    <td class="bg_cyan">整数を10進数で出力する</td>
+    <td class="bg_cyan">"%-2d","%03d"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%u</th>
+    <td class="bg_cyan">unsigned int, unsigned short</td>
+    <td class="bg_cyan">符号なし整数を10進数で出力する</td>
+    <td class="bg_cyan">"%2u","%02u"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%o</th>
+    <td class="bg_cyan">int, short, <br>
+      unsigned int, unsigned short</td>
+    <td class="bg_cyan">整数を8進数で出力する</td>
+    <td class="bg_cyan">"%06o","%03o"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%x</th>
+    <td class="bg_cyan">int, short, <br>
+      unsigned int, unsigned short</td>
+    <td class="bg_cyan">整数を16進数で出力する</td>
+    <td class="bg_cyan">"%04x"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%f</th>
+    <td class="bg_cyan">float, double</td>
+    <td class="bg_cyan">実数を出力する</td>
+    <td class="bg_cyan">"%5.2f"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%e</th>
+    <td class="bg_cyan">float, double</td>
+    <td class="bg_cyan">実数を指数表示で出力する</td>
+    <td class="bg_cyan">"%5.3e"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%g</th>
+    <td class="bg_cyan">float, double</td>
+    <td class="bg_cyan">実数を最適な形式で出力する</td>
+    <td class="bg_cyan">"%g"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%ld</th>
+    <td class="bg_cyan">long</td>
+    <td class="bg_cyan">倍精度整数を10進数で出力する</td>
+    <td class="bg_cyan">"%-10ld"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%lu</th>
+    <td class="bg_cyan">unsigned long</td>
+    <td class="bg_cyan">符号なし倍精度整数を10進数で出力する</td>
+    <td class="bg_cyan">"%10lu"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%lo</th>
+    <td class="bg_cyan">long, unsigned long</td>
+    <td class="bg_cyan">倍精度整数を8進数で出力する</td>
+    <td class="bg_cyan">"%12lo"</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%lx</th>
+    <td class="bg_cyan">long, unsigned long</td>
+    <td class="bg_cyan">倍精度整数を16進数で出力する</td>
+    <td class="bg_cyan">"%08lx"</td>
+  </tr>
+</table>
+
+<h2>表示桁数の指定</h2>
+<p>
+  表示桁数は<b>&lt;全体の幅&gt;.&lt;小数点以下の幅&gt;</b>で指定する。<br>
+  どちらか片方だけの指定でも良いし、まったく指定しなくても良い。<br>
+  指定がなければデフォルトが使用される。<br>
+&lt;小数点以下の幅&gt;は、文字列の場合には最大文字数の意味になる。
+</p>
+<table>
+  <tr>
+    <th width="60%">指定例</th>
+    <th width="40%">出力結果</th>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>
+        printf("[%8.3f]", 123.45678);
+      </code>
+    </td>
+    <td width="40%">
+      <code>[ 123.456]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>
+        printf("[%15s]", "I am a boy.");
+      </code>
+    </td>
+    <td width="40%">
+      <code>[    I am a boy.]</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="60%">
+      <code>printf("[%.6s]", "I am a boy.");</code>
+    </td>
+    <td width="40%">
+      <code>[I am a]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%8.3e]", 1234.5678);</code>
+    </td>
+    <td width="40%">
+      <code>[1.234e+3]</code>
+    </td>
+  </tr>
+</table>
+<p>
+  表示桁数の指定よりも実際の表示文字列が長くなることがある。これはsprintf()の場合に特に注意が必要である。<br>
+文字列の格納域と同じサイズにフォーマットを指定しても、<span class="col_red">配列オーバー</span>を引き起こす可能性のあることを意味するからである。
+</p>
+
+<h2>リーディングゼロの指定</h2>
+<p>
+  数値フィールドの場合に、ゼロ詰めを指定することができる。桁数の指定のまえにゼロを付加する。
+</p>
+
+<table>
+  <tr>
+    <th width="60%"> 指定例</th>
+    <th width="40%"> 出力結果</th>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%08.3f]", 123.45678);</code>
+    </td>
+    <td width="40%">
+      <code>[0123.456]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%05d]", 1);</code>
+    </td>
+    <td width="40%">
+      <code>[00001]</code>
+    </td>
+  </tr>
+</table>
+
+<h2>右詰・左詰の指定</h2>
+<p>
+  デフォルトでは右詰となる。<br>
+  左詰にしたいときは桁数指定の前にマイナスをつける。
+</p>
+
+<table>
+  <tr>
+    <th width="60%"> 指定例</th>
+    <th width="40%"> 出力結果</th>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%-15s]", "I am a boy.");</code>
+    </td>
+    <td width="40%">
+      <code>[I am a boy.    ]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%-8.3f]", 123.45678);</code>
+    </td>
+    <td width="40%">
+      <code>[123.456 ]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%-5d]", 1);</code>
+    </td>
+    <td width="40%">
+      <code>[1&nbsp;&nbsp;&nbsp;&nbsp;]</code>
+    </td>
+  </tr>
+</table>
+
+<h2>符号の指定</h2>
+<p>
+  数値の表示は、デフォルトではプラス記号を出さない。<br>
+  付けたいときは "+" を指定する。
+</p>
+
+<table>
+  <tr>
+    <th width="60%"> 指定例</th>
+    <th width="40%"> 出力結果</th>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%+5d]", 32);</code>
+    </td>
+    <td width="40%">
+      <code>[&nbsp;&nbsp;+32]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%+5d]", -32);</code>
+    </td>
+    <td width="40%">
+      <code>[&nbsp;&nbsp;-32]</code>
+    </td>
+  </tr>
+  <tr>
+    <td width="60%">
+      <code>printf("[%+8.3f]", 1.414);</code>
+    </td>
+    <td width="40%">
+      <code>[&nbsp;&nbsp;+1.414]</code>
+    </td>
+  </tr>
+</table>
+
+<h2>入力用 フォーマット指定子 一覧</h2>
+<p>
+  scanf(), fscanf(), sscanf()などで使用する指定子である。<br>
+  出力フォーマット指定子とほぼ同じだが、使えないものもある。
+</p>
+<table>
+  <tr>
+    <th bgcolor="#ffffff">指定子</th>
+    <th bgcolor="#ffffff">対応する型</th>
+    <th bgcolor="#ffffff">説明</th>
+  </tr>
+  <tr>
+    <th class="bg_green">%c</th>
+    <td class="bg_cyan">char</td>
+    <td class="bg_cyan">１文字を入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%s</th>
+    <td class="bg_cyan">char *</td>
+    <td class="bg_cyan">文字列を入力する</td>
+  </tr>
+ <tr>
+    <th class="bg_green">%d</th>
+    <td class="bg_cyan">int</td>
+    <td class="bg_cyan">整数を10進数として入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%u</th>
+    <td class="bg_cyan">unsigned int</td>
+    <td class="bg_cyan">符号なし整数を10進数として入力する</td>
+  </tr>
+   <tr>
+    <th class="bg_green">%o</th>
+    <td class="bg_cyan">int, short, unsigned int</td>
+    <td class="bg_cyan">整数を8進数として入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%x</th>
+    <td class="bg_cyan">int, unsigned int</td>
+    <td class="bg_cyan">整数を16進数として入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%f</th>
+    <td class="bg_cyan">float</td>
+    <td class="bg_cyan">実数を入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%hd</th>
+    <td class="bg_cyan">short int</td>
+    <td class="bg_cyan">単精度整数を10進数として入力する</td>
+  </tr>
+   <tr>
+    <th class="bg_green">%ld</th>
+    <td class="bg_cyan">long</td>
+    <td class="bg_cyan">倍精度整数を10進数として入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%hu</th>
+    <td class="bg_cyan">unsigned short int</td>
+    <td class="bg_cyan">符号なし単精度整数を10進数として入力する</td>
+  </tr>
+   <tr>
+    <th class="bg_green">%lu</th>
+    <td class="bg_cyan">unsigned long</td>
+    <td class="bg_cyan">符号なし倍精度整数を10進数として入力する</td>
+  </tr>
+   <tr>
+    <th class="bg_green">%lo</th>
+    <td class="bg_cyan">long, unsigned long</td>
+    <td class="bg_cyan">倍精度整数を8進数として入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%lx</th>
+    <td class="bg_cyan">long, unsigned long</td>
+    <td class="bg_cyan">倍精度整数を16進数として入力する</td>
+  </tr>
+  <tr>
+    <th class="bg_green">%lf</th>
+    <td class="bg_cyan">double</td>
+    <td class="bg_cyan">倍精度実数を入力する</td>
+  </tr>
+</table>
+
+</body>
+</html>

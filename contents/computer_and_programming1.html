@@ -1,0 +1,142 @@
+<html>
+<head>
+<body>
+
+<h2>コンピュータ(computer)の５大機能と動作原理</h2>
+<table>
+  <tr>
+    <th>機能</th>
+    <th>働き</th>
+    <th colspan=2>装置</th>
+    <th>備考</th>
+  </tr>
+  <tr>
+    <td>演算機能</td>
+    <td>考える</td>
+    <td>演算装置</td>
+    <td rowspan=2>中央処理装置（CPU）
+      <br>
+      <u>C</u>entral
+      <u>P</u>rocessing
+      <u>U</u>nit
+    </td>
+    <td rowspan=2>cpu</td>
+  </tr>
+  <tr>
+    <td>制御機能</td>
+    <td>動かす</td>
+    <td>制御装置</td>
+  </tr>
+  <tr>
+    <td rowspan=2>記憶機能</td>
+    <td rowspan=2>覚える</td>
+    <td rowspan=2>記憶装置
+      <br>memory device
+    </td>
+    <td>主記憶装置</td>
+    <td>メモリ</td>
+  </tr>
+  <tr>
+    <td>補助記憶装置</td>
+    <td>ストレージ（SSD, HDDなど）</td>
+  </tr>
+  <tr>
+    <td>入力機能</td>
+    <td>取り込む</td>
+    <td>入力装置</td>
+    <td rowspan=2>入出力装置（I/O）
+      <br>
+      <u>I</u>nput/
+      <u>O</u>utput device
+    </td>
+    <td>キーボード, マウス など</td>
+  </tr>
+  <tr>
+    <td>出力機能</td>
+    <td>外に出す</td>
+    <td>出力装置</td>
+    <td>ディスプレイ, プリンタ など</td>
+  </tr>
+</table>
+
+<img src="http://wwws.kobe-c.ac.jp/deguchi/c/computer.gif" alt="computer.gif" width=100%>
+<ul>
+  <li>プログラム（コンピュータを動かす一連の命令）（program）はデータ（data）と共にメモリ（memory）に格納されている
+  <ol>
+    <li>命令フェッチ（instruction fetch）：メモリ中のプログラムを読み出し
+    <li>命令デコード（instruction decode）：命令を解釈（復号化）し
+    <li>エグゼキューション（execution）：実行する
+  </ol>
+  を繰り返す
+  <li>次に実行する命令が格納されている場所を指すレジスタ（register）をプログラムカウンタ（program counter）という
+  <li>サブルーチン（subroutine）からの戻り番地を保持するためにスタック（stack）を用いる
+  <li>CPUが解釈実行できるプログラムを機械語（machine language）プログラムという
+  <li>次のような命令がある
+    <ul>
+      <li>データをメモリからレジスタへロード（load）
+      <li>データをレジスタからメモリへストア（store）
+      <li>レジスタ間で算術論理演算
+      <li>ステータスレジスタの内容に従って条件分岐
+      <li>サブルーチンコール（subroutine call）、リターン（return）
+    </ul>
+</ul>
+
+<h2>プログラミング言語（programming language）について</h2>
+
+<h3>アセンブリ言語（assembly language）</h3>
+<p>
+  低水準言語（低級言語）（low-level language）とも呼ばれる。<br>
+  (※低級とは、ハードウェアに近いという意味)
+</p>
+
+<ul>
+  <li>機械語は２進数で表現（符号化）されているので人間が記述するのは難しい。<br>
+  そこで、その意味を表現するニーモニックコード（mnemonic code）で記述するのがアセンブリ言語。
+  <li>機械語とほぼ１対１に対応する
+  <ul>
+    <LI>LOAD&nbsp;&nbsp;R0, 1234
+    <LI>STORE&nbsp;2345, R0
+    <LI>SUB&nbsp;&nbsp;&nbsp; R0, R1
+    <LI>JUMP&nbsp;&nbsp; NE, 3456
+    <LI>CALL&nbsp;&nbsp; 4567
+  </ul>
+  <li>アセンブリ言語で書かれたプログラムを機械語に変換するプログラムをアセンブラ（assembler）と呼ぶ
+</ul>
+
+<h3>高水準言語（高級言語）（high-level language）</h3>
+<ul>
+  <li>アセンブリ言語（機械語）はCPUに依存する上、
+  部品としての粒度が小さいため、可読性、移植性が低い。<br>
+  そこで、人間にとって分かりやすい命令と構文規則からなる言語が用いられる。
+  <ul>
+    <li>BASIC
+    <li>FORTRAN
+    <li>COBOL
+    <li>Pascal
+    <li>C
+    <li>Lisp
+    <li>Prolog
+    <li>Smalltalk
+    <li>Java
+    <li>Ruby
+    <br>等
+  </ul>
+  <li>高水準言語で記述されたプログラムを機械語に変換するトランスレータ（translator）としては、
+  コンパイラ（compiler）やインタプリタ（interpreter）が用いられる。
+  <li>コンパイラは翻訳に、インタプリタは通訳に似ている。
+  <li>これらは言語処理系あるいは単に処理系と呼ばれる。
+</ul>
+
+<h2>プログラミング言語Ｃ</h2>
+<p>　UnixというOS（Operating System）を開発するために作られた言語</p>
+<dl>
+  <dt>C</dt>
+    <dd>Kenneth L. Thompson と Dennis M. Ritchie が B 言語を改良して作った。（1973）</dd>
+  <dt>K&amp;R C</dt>
+    <dd>brian w. kernighan &amp; dennis m. ritchie の「the c programming language」（1978）</dd>
+  <dt>C99, C11</dt>
+  <dd>ISOで規格を改訂し、c++の機能のいくつかを取り込んだ。（1999, 2011）</dd>
+</dl>
+
+</body>
+</html>
