@@ -135,8 +135,46 @@ $ git clone [url]
 $ git status
 ```
 
+```mermaid
+graph RL;
+  A-->|one|B;
+  A-->C;
+  B-->D;
+  C-->D;
+```
+```mermaid
+sequenceDiagram
+	Alice->>+John: Hello John, how are you?
+	Alice->>+John: John, can you hear me?
+	John-->>-Alice: Hi Alice, I can hear you!
+	John-->>-Alice: I feel great!
+```
 
+```mermaid
+graph LR
+	A[Christmas] -->|Get money| B(Go shopping)
+	B --> C{Let me think}
+	C -->|One| D[Laptop]
+	C -->|Two| E[iPhone]
+	C -->|Three| F[fa:fa-car Car]
+```
 
+```mermaid
+graph RL
+  subgraph Side-A
+    A1[files_A1]
+    A2[files_A2]
+  end
+  subgraph Side-B
+    B1[files_B1]
+    B2[files_B2]
+  end
+
+  A1-->B1
+  B2-->A2
+```
+
+  /* A1-.ほげほげ<br>hoge.->B1 */
 
 #### git add
 ステージへの追加
@@ -257,14 +295,6 @@ git add origin https:github.com/user/repo.git
 * 今後は `origin` という名前でgithubリポジトリにアップしたり取得したりできる
 * gitではメインのリモートリポジトリの事を `origin` と呼んでいる
 
-
-#### git clone
-既存のリモートリポジトリをローカルに複製する
-
-```bash
-git clone リモートリポジトリ名
-```
-
 #### git push
 リモートリポジトリ（Github）へ送信する
 
@@ -276,11 +306,6 @@ git push origin master
 git push -u origin master
 ```
 
-#### git remote
-リモートを表示する
-
-```bash
-git remote
 
 # 対応するURLを表示
 git remote -v

@@ -10,7 +10,8 @@
     "theme-official",
     "navigator",
     "include-codeblock",
-    "image-captions"
+    "image-captions",
+    "mermaid-gb3"
   ],
   "pluginsConfig": {
     "image-captions": {
