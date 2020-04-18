@@ -142,39 +142,6 @@ graph RL;
   B-->D;
   C-->D;
 ```
-```mermaid
-sequenceDiagram
-	Alice->>+John: Hello John, how are you?
-	Alice->>+John: John, can you hear me?
-	John-->>-Alice: Hi Alice, I can hear you!
-	John-->>-Alice: I feel great!
-```
-
-```mermaid
-graph LR
-	A[Christmas] -->|Get money| B(Go shopping)
-	B --> C{Let me think}
-	C -->|One| D[Laptop]
-	C -->|Two| E[iPhone]
-	C -->|Three| F[fa:fa-car Car]
-```
-
-```mermaid
-graph RL
-  subgraph Side-A
-    A1[files_A1]
-    A2[files_A2]
-  end
-  subgraph Side-B
-    B1[files_B1]
-    B2[files_B2]
-  end
-
-  A1-->B1
-  B2-->A2
-```
-
-  /* A1-.ほげほげ<br>hoge.->B1 */
 
 #### git add
 ステージへの追加
