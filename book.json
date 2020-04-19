@@ -11,7 +11,8 @@
     "navigator",
     "include-codeblock",
     "image-captions",
-    "mermaid-gb3"
+    "mermaid-gb3",
+    "js-sequence-diagram"
   ],
   "pluginsConfig": {
     "image-captions": {

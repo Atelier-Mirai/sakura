@@ -115,6 +115,20 @@ git config --global color.ui auto
 ```
 $ git config --global core.editor "atom --wait"
 ```
+
+### git l でログを簡潔表示できるようにする。
+``` bash
+$ git config --global alias.l "log --date=short --pretty=format:'%C(yellow)%h %C(reset)%cd %C(red)%d %C(reset)%s'"
+```
+
+``` alias(別名) ``` と呼ばれる git の機能です。  
+
+``` bash
+$ git config --global -e
+```
+で、設定内容をエディタで編集できる。
+いろいろな方が便利な設定を公開しているので、gitに慣れてきたら自分好みに使いやすくカスタマイズするのも良い。
+
 ## 基本操作
 
 ### リポジトリの作成
@@ -128,23 +142,25 @@ $ git init [project-name]
 $ git clone [url]
 ```
 
-### 変更の作成
+### ファイルの変更管理
+```mermaid
+graph LR
+  作業ディレクトリ-->|add|ステージ
+  ステージ-->|commit|リポジトリ
+```
+<figcaption class="left" style="margin-top: 0;"> 図: Gitの三つの領域 </figcaption>
+
+
 
 新規または変更のあるファイルを表示する
 ``` bash
 $ git status
 ```
 
-```mermaid
-graph RL;
-  A-->|one|B;
-  A-->C;
-  B-->D;
-  C-->D;
-```
 
-#### git add
-ステージへの追加
+
+
+#### ステージへの追加
 
 ```
 $ git add <ファイル名>

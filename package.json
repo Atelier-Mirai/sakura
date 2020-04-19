@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "gitbook-plugin-js-sequence-diagram": "^0.0.8",
     "gitbook-plugin-mermaid-gb3": "^2.1.0"
   }
 }
