@@ -328,7 +328,6 @@ $ git fetch origin
 # ブランチを切り替えてフェッチした内容を確認する
 git switch remotes/origin/master
 
-$ git
 $ git switch master         # master ブランチに切り替える
 ```
 
