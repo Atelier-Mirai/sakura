@@ -289,9 +289,69 @@ $ git restore --source <コミット> <ファイル名>
 
 ## ブランチの操作
 
+Git には、「ブランチ」と呼ばれる機能がある。
+![ブランチ](images/branches.png)
 
+実装したい機能がある場合、マスターブランチ(主幹)に直接コードを記述せず、一旦、開発用のブランチ(枝)を作成する。
+この開発用ブランチ上でのコーディングが完了したら、マスターブランチに統合(merge)するようにすると良い。
 
+### ブランチの一覧を表示する
+``` sh
+$ git branch
+```
 
+### ブランチを新規作成する
+``` sh
+$ git branch <ブランチ名>
+$ git branch feature_x
+```
+
+### ブランチを切り替える
+```bash
+$ git switch <既存ブランチ名>
+$ git switch feature_x
+```
+
+### ブランチを新規作成して切り替える
+
+``` sh
+$ git switch -c <新ブランチ名>
+```
+
+### ブランチ名を変更する
+
+``` sh
+$ git branch -m <旧ブランチ名> <新ブランチ名>
+```
+
+### ブランチを削除する
+
+``` sh
+# masterにマージされていない変更があればエラーとなる
+$ git branch -d <ブランチ名>
+$ git branch -d feature_x
+```
+
+### ブランチを強制削除する
+
+``` sh
+git branch -D <branch名>
+```
+
+### 統合(merge)
+開発用ブランチでの変更内容を、マスターブランチに統合(merge)する。
+
+``` sh
+$ git switch master
+$ git merge <ブランチ名>
+$ git merge feature_x
+```
+
+** 競合(コンフリクト) **
+
+``` masterブランチ ``` と ``` feature_x ブランチ ``` で、
+同じファイルの同じ行が編集されていた場合に発生する。
+手動でどちらの編集内容を残すか、適宜取捨選択し、解決する。
 
 ## リモートリポジトリとの同期
 
@@ -322,176 +382,25 @@ $ git push
 で、リモートリポジトリに、ローカルリポジトリを送信できる。
 
 ### リモートリポジトリから履歴を取得、作業ディレクトリに取り込む(fetch & merge)
-``` sh
-# リモートリポジトリのマスターブランチをダウンロードする。
-$ git fetch origin
-```
-``` sh
-# ブランチを切り替えてフェッチした内容を確認する
-```
-# ブランチを切り替える。
-$ git switch master
-# リモートリポジトリに統合(merge)する。
-$ git merge origin/master
-```
 
 ``` sh
+# リモートリポジトリのマスターブランチをダウンロードする
+$ git fetch origin master
+# ブランチを切り替える
+$ git switch master
+# リモートリポジトリに統合(merge)する
 $ git merge origin/master
 ```
-これで、現在のブランチに、リモートリポジトリが統合される。
 
 ### リモートリポジトリから履歴を取得、作業ディレクトリに取り込む(pull)
 ``` sh
 $ git pull
 ```
-リモートリポジトリから履歴を取得、変更を統合する。
-(リモートリポジトリの履歴に置き換わる)
 
-
-**補足**
-
-ブランチの中身を全て確認する（-aはallの略）
-現在いるブランチに「＊」がつく
-git branch -a
-
-ブランチを切り替えてフェッチした内容を確認する
-git checkout remotes/origin/master
-
-元のマスターブランチに切り替える
-git checkout master
-
-
-git pullは下記コマンドと同じ事をしている
-git fetch origin master
-git merge origin/master
-
-git pullはリモートリポジトリからローカルリポジトリのワークツリーに反映させるのを一度にやってしまう。便利な反面注意点がある。
-
-プルを実行する際の注意点
-プルしてきたブランチは現在いるブランチに統合される為、思わぬブランチに統合されファイルがぐちゃぐちゃになってしまう危険性がある。
-そのため慣れないうちはフェッチを使った方が安全。
-
-### ブランチ
-並行して複数の機能を開発するためにあるのがブランチ
-
-#### ブランチを新規作成する
-```bash
-$ git branch <ブランチ名>
-$ git branch feature
-```
-
-#### ブランチの一覧を表示する
-```bash
-$ git branch
-```
-
-#### ブランチを切り替える
-```bash
-$ git switch <既存ブランチ名>
-$ git switch feature
-```
-
-#### ブランチを新規作成して切り替える
-```
-git switch -c <新ブランチ名>
-```
-
-#### ブランチを変更・削除する
-```bash
-# 自分が作業しているブランチの名前を変更する
-git branch -m <ブランチ名>
-git branch -m new_branch
-git branch -m <古いブランチ名> <新しいブランチ名>
-
-# ブランチを削除する
-# masterにマージされていない変更が残っている場合はエラーが出る
-git branch -d <ブランチ名>
-git branch -d feature
-
-# ブランチを強制削除する
-# masterにマージされていない変更が残っていても強制削除される
-git branch -D <branch名>
-```
-
-### マージ
-マージとは他の人の変更内容を取り込む作業のこと
-
-#### Auto Merge:基本的なマージ
-`masterブランチ` の内容が `developブランチ` を分岐した時より進んでしまっている場合、両方の変更を取り込んだマージコミットが作成される。
-マージコミットは２つのperentをもつ。
-
-```bash
-# 指定したブランチが作業中のブランチにマージされる
-git merge <ブランチ名>
-git merge <リモート名/ブランチ名>
-git merge origin/master
-```
-
-#### コンフリクト
-`masterブランチ`と`developブランチ`で
-同じファイルの同じ行が編集されていた場合、
-マージした際に `コンフリクト` が起きる。
-
-###### コンフリクトが起きないようにする為には
-・複数人で同じファイルを変更しない
-・pullやmergeをする際に変更中の状態をなくしておく（commitやstashをしておく）
-
-## プルリクエスト
-自分の変更したコードをリポジトリに取り込んでもらえるよう依頼する機能
-
-```bash
-# プルリクエストの順序
-
-1. ブランチを切る
-2. ファイルを編集する
-3. ローカルにadd,commitする
-4. githubにプッシュする
-5. githubで「Pull request」タブの「New pull request」ボタンを選択。
-6.「base」と「compare」を選択する。
-7.「Create pull request」を選択。
-8.タイトルとコメントを入力。
-9.「Create pull request」を押す。
-10.右側の「reviewers」からレビューしてもらいたい人を選択し通知を送る。
-
-# レビュワーの作業順序
-
-1. githubで「Pull request」タブのレビューするコードを選択。
-2. 「File changed」からコードを確認する。
-3. コードの修正依頼をする場合は修正するコードをホバーして「➕」を押す。
-4. コメントを入力して「Add single comment」を押す
-5. コードレビューがリクエストした人に送信される。
-
-
-# プルリクエストした内容を承認する場合
-
-1.githubで「Pull request」タブの「Review changes」を押す。
-2.「Approve」を選択し「Submit review」を押す。
-
-
-# 承認されたリクエストをマージする方法
-
-1. githubで「Pull request」タブの中の「conversation」タブで「Merge pull request」を選択する。
-2.マージメッセージを確認し「Comfirm merge」を押す。
-3.「Delete branch」ボタンを押してプルリクエストブランチを削除する。
-
-
-# マージした内容をローカルにも取り込みプリクエストブランチを削除する。
-
-git checkout master
-git pull origin master
-git branch -d pull_request
-
-```
-
-#### プルにはマージ型とリベース型がある
-```bash
-# マージ型のプル（通常のプル fetch → mergeと同じ挙動）
-git pull <リモート名> <ブランチ名>
-git pull origin master
-
-## タグ
-コミットを参照しやすくするために、分かりやすく名前を付けるのがタグ。
-よくリリースポイントに使います。
+``` git pull ``` はリモートリポジトリからローカルリポジトリへの反映が一度にでき、便利である。
+しかしながら、取得したブランチは、現在いるブランチに統合される為、
+意図せぬブランチに統合され、ファイルが混沌化する虞もある。
+そのため、慣れないうちは ``` fetch & merge ``` を推奨する。
 
 #### タグの一覧を表示する
 ```bash
@@ -531,19 +440,48 @@ $ git tag -d v1.0.0
 $ git push --delete origin v1.0.0
 ```
 
+### プルリクエスト
+自分の変更したコードをリポジトリに取り込んでもらえるよう依頼する機能
 
-
-### ブランチを切り替える
+** 依頼者側の操作 **
+``` text
+1. ブランチを切る
+2. ファイルを編集する
+3. ローカルにadd,commitする
+4. githubにプッシュする
+5. githubで「Pull request」タブの「New pull request」ボタンを選択。
+6.「base」と「compare」を選択する。
+7.「Create pull request」を選択。
+8.タイトルとコメントを入力。
+9.「Create pull request」を押す。
+10.右側の「reviewers」からレビューしてもらいたい人を選択し通知を送る。
 ```
-$ git switch <branch>
+
+** レビュワーの操作 **
+``` text
+1. githubで「Pull request」タブのレビューするコードを選択。
+2. 「File changed」からコードを確認する。
+3. コードの修正依頼をする場合は修正するコードをホバーして「➕」を押す。
+4. コメントを入力して「Add single comment」を押す
+5. コードレビューがリクエストした人に送信される。
 ```
 
-# ブランチを新規作成して切り替える
-```
-$ git switch -c <branch>
+** プルリクエストした内容を承認する場合 **
+``` text
+1.githubで「Pull request」タブの「Review changes」を押す。
+2.「Approve」を選択し「Submit review」を押す。
 ```
 
-Gitの基本操作逆引き辞典
-https://qiita.com/ray_20500/items/490b4a49f6da20b616a7
+** 承認されたリクエストをマージする方法 **
+``` text
+1. githubで「Pull request」タブの中の「conversation」タブで「Merge pull request」を選択する。
+2.マージメッセージを確認し「Comfirm merge」を押す。
+3.「Delete branch」ボタンを押してプルリクエストブランチを削除する。
+```
 
-[git switchとrestoreの役割と機能について](https://qiita.com/yukibear/items/4f88a5c0e4b1801ee952)
+### マージした内容をローカルにも取り込みプリクエストブランチを削除する。
+``` sh
+$ git switch master
+$ git pull origin master
+$ git branch -d pull_request
+```
