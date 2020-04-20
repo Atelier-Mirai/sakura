@@ -188,6 +188,7 @@ $ git add .
 $ git restore --staged <ファイル名>
 ```
 
+
 #### 変更をコミットする
 エディタで、変更内容を編集して、コミットする。
 ``` bash
@@ -489,41 +490,28 @@ git tag -l "201705"
 20170502_01
 20170502_02
 ```
-#### タグには２つの種類がある
-・注釈付き版（annotated）
-・軽量版（lightweight）
-
-#### 注釈付き版のタグの作成
-``` bash
-git tag -a <タグ名> -m "<メッセージ>"
-git tag -a 20200203_01 -m "version 20200203_01"
-```
 
 #### 軽量版のタグの作成
 ```bash
 git tag <タグ名>
-git tag 20200203_01
+git tag v1.0.0
 ```
 
 #### 昔のコミットにタグを付ける
 ```bash
-git tag -a <タグ名> <コミットID> -m "<メッセージ>"
-git tag -a 20200203_01 hfk9dsh -m "version 20200203_01"
-
 git tag <タグ名> <コミットID>
-git tag 20200203_01 hfk9dsh
+git tag v0.2.0 hfk9dsh
 ```
-
 #### タグのデータを表示する
 ```bash
 git show <タグ名>
-git show 20200203_01
+git show v0.2.0
 ```
 
 #### タグをリモートリポジトリに送信する方法
 ```bash
 git push <リモート名> <タグ名>
-git push origin 20200203_01
+git push origin v1.0.0
 
 # タグを一斉に送信する
 git push origin --tags
@@ -533,9 +521,8 @@ git push origin --tags
 Codeタブ → Releaseタブ →　Tags
 
 
-git switch
 
-# ブランチを切り替える
+### ブランチを切り替える
 ```
 $ git switch <branch>
 ```
