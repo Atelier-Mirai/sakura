@@ -480,8 +480,10 @@ git pull origin master
 #### タグの一覧を表示する
 ```bash
 git tag
+```
 
 # パターンを指定してタグを表示
+``` sh
 git tag -l "201705"
 20170501_01
 20170502_01
@@ -492,7 +494,7 @@ git tag -l "201705"
 ・軽量版（lightweight）
 
 #### 注釈付き版のタグの作成
-```bash
+``` bash
 git tag -a <タグ名> -m "<メッセージ>"
 git tag -a 20200203_01 -m "version 20200203_01"
 ```
@@ -543,49 +545,7 @@ $ git switch <branch>
 $ git switch -c <branch>
 ```
 
-git restore
+Gitの基本操作逆引き辞典
+https://qiita.com/ray_20500/items/490b4a49f6da20b616a7
 
-# ファイルの変更を取り消す
-git restore <filename>
-
-# 特定ファイルを特定のコミットの状態にする
-git restore --source <commit> <filename>
-
-## その他
-
-#### コマンドにエイリアスをつける
-```bash
-git config --global alias.ci commit
-git config --global alias.st status
-git config --global alias.br branch
-git config --global alias.co
-```
-* エイリアスをつける事で設定が楽になる
-* git config は設定を変更するコマンド
-* `--global` をつけるとPC全体の設定を変更するコマンドになる
-* `--global` を付けないと特定のプロジェクトにしか反映されない。
-* 今回の省略コマンドは全てのプロジェクトで使用するので--grobalをつける
-
-#### Gitで管理したくないファイルを外す
-* パスワード情報などが記載されているファイル
-* windwsやmacで自動生成されるファイル
-* キャッシュ
-* チーム開発に必要ないファイル
-
-##### .gitignoreファイルに指定する
-```bash
-
-"4つの指定方法"
-
-# 指定したファイルを除外
-index.html
-
-#ルートディレクトリを指定
-/root.html
-
-# ディレクトリ以下を除外
-dir/
-
-# /以外の文字列にマッチ「*」
-/*/*.css
-```
+[git switchとrestoreの役割と機能について](https://qiita.com/yukibear/items/4f88a5c0e4b1801ee952)
