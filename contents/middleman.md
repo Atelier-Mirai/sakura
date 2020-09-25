@@ -34,26 +34,32 @@ source ディレクトリ: webサイト構築用に、slim, sass 等のソース
 config.rb: middleman の設定を行うためのファイル
 Gemfile: Middlemanが必要とする、gem(=便利なプログラム)を記述したファイル
 
+## 雛型
+そのままでも使えますが、少しだけ便利に使えるよう、調整した雛型を作成しました。
+```
+$ middleman init MY_PROJECT -T Atelier-Mirai/slim_flou
+```
+
 ## ディレクトリ構造
 
 ```
 my_middleman_site/
   +-- .gitignore               # git の対象にしたくないファイルを記述する
   +-- Gemfile                  # Middlemanが必要とするgemを記述する
-  +-- Gemfile.lock             
+  +-- Gemfile.lock
   +-- config.rb                # Middleman の各種設定用ファイル
   +-- build/                   # 静的サイトのファイルがコンパイルされ出力されるディレクトリ
   +-- data/                    # データファイルを置くと、テンプレート内(=slim)で利用できる
-  +-- helper/                  # よくあるHTMLの作業を簡単にためのプログラムを自作できる
+  +-- helper/                  # よくあるHTMLを簡単に記述するためのプログラムを自作できる
   +-- source/                  # web サイトのソースファイルを置くディレクトリ
       +-- images/              # 画像ファイル
       +-- index.html.slim      # slimで記述。middlemanがコンパイルし、index.htmlになる
       +-- javascripts/         # サイトで必要なjavascript用のディレクトリ
-      ¦   +-- site.js          
+      ¦   +-- site.js
       +-- layouts/             # レイアウトファイル(後述)を置くディレクトリ
       ¦   +-- layout.slim
       +-- stylesheets          # スタイルシートを置くディレクトリ
-          +-- site.css.scss
+          +-- style.css.scss
 ```
 
 それぞれのファイルは、次のように記述します。
@@ -80,6 +86,9 @@ gem "middleman-minify-html"
 ```
 # 自動再読み込み
 activate :livereload
+
+# 相対URLを使う
+activate :relative_assets
 
 # ベンダープリフィックス付与
 activate :autoprefixer do |prefix|
@@ -127,18 +136,18 @@ html
     title
       = current_page.data.title || "株式会社さくら商会"
 
-    / ファビコンの指定
+    / ファビコンの指定 https://ao-system.net/favicongenerator/
     = favicon_tag 'favicon.ico'
     link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-180x180.png"
 
     / 検索エンジン用にサイトの紹介文章
-    meta name="description" content="お花見ならさくら商会。屋台の出店からライトアップ、場所とリまでお任せください。"
+    meta name="description" content="お花見ならさくら商会。屋台の出店からライトアップ、場所取りまでお任せください。"
 
     / fontawesome
-    link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"
+    link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
 
     / jQuery
-    script src="https://code.jquery.com/jquery-3.5.0.min.js"
+    script src="https://code.jquery.com/jquery-3.5.1.min.js"
 
     / IE Buster
     script src="https://cdn.jsdelivr.net/npm/ie-buster@1.1.0/dist/ie-buster.min.js"
@@ -364,42 +373,50 @@ source/images/ディレクトリ内の画像を表示させたい場合には、
 Middleman によって提供されるヘルパに加え、コントローラやビューの中からアクセスできる独自のヘルパを追加することができます。
 良く使うhtml部品生成用のヘルパを創っておくと便利です。
 
-* カスタム定義ヘルパの例：ファイル名を与えるとチラシ用のhtmlを出力してくれる
+* カスタム定義ヘルパの例：isbn番号からAmazonへのリンクを生成する
 
 ** helpers/custom_helper.rb **
 ```
-def chirashi_tag(title: , filename: )
-  "<div class='col-xs-12 col-md-4'>" +
-    "<div class='card leaflet'>" +
-      "<a href=\"/pdf/#{filename}.pdf\">" +
-        "<img src=\"/pdf/thumbnail/#{filename}.jpg\" class='card-img-top w-100' alt=\"\">" +
-      "</a>" +
-      "<div class='card-footer'>" +
-          "#{title}" +
-      "</div>" +
-    "</div>" +
-  "</div>"
+class String
+  def to_amazon_url
+    "https://www.amazon.co.jp/gp/product/#{self}/ref=as_li_tl?ie=UTF8&camp=247&creative=1211&creativeASIN=#{self}&linkCode=as2&tag=ateliermira05-22&linkId=d9a444d6a2c93e24e44eb0b3bd6d3981"
+  end
+
+  def to_amazon_image
+    "//ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=JP&ASIN=#{self}&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=ateliermira05-22"
+  end
 end
+
+def book_intro(isbn)
+  url   = isbn.to_s.to_amazon_url
+  image = isbn.to_s.to_amazon_image
+  content_tag :div, class: 'column' do
+    link_to url, class: 'ui card', target: '_blank' do
+      content_tag :div, class: 'image' do
+        image_tag image
+      end
+    end
+  end
 ```
 
-* 実際に、index.html.slimの中で使ってみる
+* index.html.slimでの使用例
 
 ** source/index.html.slim **
 ```
-= chirashi_tag title: "春の大売り出し", filename: "chirashi"
+= book_intro("4802611897")
 ```
 
 * ビルドして出力された html
 
 ** build/index.html **
-```
-<div class="col-xs-12 col-md-4">
-  <div class="card leaflet">
-    <a href="/pdf/chirashi.pdf">
-      <img src="/pdf/thumbnail/chirashi.jpg" class="card-img-top w-100" alt="">
-    </a>
-    <div class="card-footer">春の大売り出し</div>
-  </div>
+
+``` html
+<div class="column">
+  <a href="https://www.amazon.co.jp/gp/product/4802611897/ref=as_li_tl?ie=UTF8&amp;camp=247&amp;creative=1211&amp;creativeASIN=4802611897&amp;linkCode=as2&amp;tag=ateliermira05-22&amp;linkId=d9a444d6a2c93e24e44eb0b3bd6d3981" class="ui card" target="_blank">
+    <div class="image">
+      <img src="//ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&amp;MarketPlace=JP&amp;ASIN=4802611897&amp;ServiceVersion=20070822&amp;ID=AsinImage&amp;WS=1&amp;Format=_SL250_&amp;tag=ateliermira05-22">
+    </div>
+  </a>
 </div>
 ```
 
@@ -416,7 +433,7 @@ html
     title "株式会社さくら商会"
   body
     / この = yield の部分が、各slimで置き換えられる。
-    = yield  
+    = yield
 ```
 
 slim で、各ページに固有の内容を記述します。
@@ -478,7 +495,7 @@ html
     h1 トップページです。
     p 我が社のヒーローイメージです。
     = image_tag 'hero.jpg', alt: 'ヒーローイメージ'
-    = yield  
+    = yield
 ```
 
 ** source/layouts/site.slim **
@@ -488,7 +505,7 @@ html
   head
     title "株式会社さくら商会"
   body
-    = yield  
+    = yield
 ```
 
 トップページである、``` index.html ``` には、``` top.slim ``` というレイアウトファイルを適用し、
@@ -537,7 +554,7 @@ html
   head
     title "株式会社さくら商会"
   body
-    = yield  
+    = yield
     / この = partial "footer" の部分が、``` _footer.slim ``` で置き換えられる。
     = partial "footer"
 ```
@@ -608,7 +625,7 @@ h1 猫の紹介
 my_middleman_site/
   +-- .gitignore               # git の対象にしたくないファイルを記述する
   +-- Gemfile                  # Middlemanが必要とするgemを記述する
-  +-- Gemfile.lock             
+  +-- Gemfile.lock
   +-- config.rb                # Middleman の各種設定用ファイル
   +-- build/                   # 静的サイトのファイルがコンパイルされ出力されるディレクトリ
   +-- data/                    # データファイルを置くと、テンプレート内(=slim)で利用できる
@@ -617,7 +634,7 @@ my_middleman_site/
       +-- images/              # 画像ファイル
       +-- index.html.slim      # slimで記述。middlemanがコンパイルし、index.htmlになる
       +-- javascripts/         # サイトで必要なjavascript用のディレクトリ
-      ¦   +-- site.js          
+      ¦   +-- site.js
       +-- layouts/             # レイアウトファイル(後述)を置くディレクトリ
       ¦   +-- layout.slim
       +-- stylesheets          # スタイルシートを置くディレクトリ

@@ -8,13 +8,20 @@
   },
   "plugins": [
     "theme-official",
-    "navigator",
+    "page-toc-button",
     "include-codeblock",
-    "image-captions",
+    "anchors",
     "mermaid-gb3",
     "js-sequence-diagram"
   ],
   "pluginsConfig": {
+    "include-codeblock": {
+      "template": "./resources/gitbook-plugin-include-codeblock.hbs"
+    },
+    "page-toc-button": {
+      "maxTocDepth": 2,
+      "minTocSize": 2
+    },
     "image-captions": {
       "caption": "図 _BOOK_IMAGE_NUMBER_. _CAPTION_",
       "align": "left"
@@ -22,9 +29,9 @@
   },
   "pdf": {
     "pageNumbers": true,
-    "fontFamily": "VL Gothic",
-    "fontSize": 10,
-    "paperSize": "a4",
+    "fontFamily": "Helvetica Neue",
+    "fontSize": 11,
+    "paperSize": "b5",
     "margin": {
       "right": 0,
       "left": 0,
