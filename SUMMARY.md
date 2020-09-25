@@ -5,5 +5,5 @@
 * [Slim](contents/slim.md)
 * [Markdown](contents/markdown.md)
 * [Sass](contents/sass.md)
-* [FLOU](contents/flow.md)
+* [FLOU](contents/flou.md)
 * [Git](contents/git.md)

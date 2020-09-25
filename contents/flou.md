@@ -1,532 +1,314 @@
-# FLOU
+![ブランチ](images/branches.png)
+![ブランチ](images/branches.png)
+
+FLOU
+===============================================================================
 
 Webの開発をやったことのある方なら誰しも、「CSSって結局どう書くのがベストなの？」という悩みを感じたことがあるでしょう。
 一見簡単なCSSですが、一度書き始めるとそのあまりの自由さに、まるで大海原に放り出された赤子のような気分になってしまいますよね。
 人生何事も、ある程度制約があったほうがやりやすいものです。
 そんなわけで今日はCSSの設計について考えてみましょう。
 
-[FLOCSSを扱いきれないあなたに贈る、スリムなCSS設計の話](https://webnaut.jp/technology/20170407-2421/)をもとに簡略化。
-
-## F、L、O、Uの4つに分けよう
-
-* すっきりした構文
-  * 閉じタグの無い短い構文 (代わりにインデントを用いる)
-  * 閉じタグを用いた HTML 形式の構文
-  * 設定可能なショートカットタグ (デフォルトでは `#` は `<div id="...">` に, `.` は `<div class="...">` に)
-* 安全性
-  * デフォルトで自動 HTML エスケープ
-* 柔軟な設定
-* プラグインを用いた拡張性:
-  * インクルード
-* 高性能
-  * ERB に匹敵するスピード
-
-## リンク
-
-* ホームページ: <http://slim-lang.com>
-
-## イントロダクション
-
-### Slim とは?
-
-Slim は 高速, 軽量なテンプレートエンジンです。
-Slim の核となる構文は1つの考えによって導かれています: "この動作を行うために最低限必要なものは何か。"
-
-### なぜ Slim を使うのか?
-
-* Slim によって メンテナンスが容易な限りなく最小限のテンプレートを作成でき, 正しい文法の HTML が書けることを保証します。
-* Slim の構文は美しく, テンプレートを書くのがより楽しくなります。Slim は主要なフレームワークで互換性があるので, 簡単に始めることができます。
-* Slim のアーキテクチャは非常に柔軟なので, 構文の拡張やプラグインを書くことができます。
-
-___そう, Slim は速い!___ Slim は開発当初からパフォーマンスに注意して開発されてきました。
-私たちの考えでは, あなたは Slim の機能と構文を使うべきです。Slim はあなたのアプリケーションのパフォーマンスに悪影響を与えないことを保証します。
-
-### どうやって使い始めるの?
-
-Slim を gem としてインストール:
-
-~~~
-gem install slim
-~~~
-
-あなたの Gemfile に `gem 'slim'` と書いてインクルードするか, ファイルに `require 'slim'` と書く必要があります。これだけです! 後は拡張子に .slim を使うだけで準備完了です。
-
-### 構文例
-
-Slim テンプレートがどのようなものか簡単な例を示します:
-
-~~~ slim
-doctype html
-html
-  head
-    title Slim のファイル例
-    meta name="keywords" content="template language"
-    meta name="author" content=author
-    link rel="icon" type="image/png" href=file_path("favicon.png")
-    javascript:
-      alert('Slim は javascript の埋め込みに対応しています!')
-
-  body
-    h1 マークアップ例
-
-    #content
-      p このマークアップ例は Slim の典型的なファイルがどのようなものか示します。
-
-    == yield
-
-    - if items.any?
-      table#items
-        - for item in items
-          tr
-            td.name = item.name
-            td.price = item.price
-    - else
-      p アイテムが見つかりませんでした。いくつか目録を追加してください。
-        ありがとう!
-
-    div id="footer"
-      == render 'footer'
-      | Copyright &copy; #{@year} #{@author}
-~~~
-
-インデントについて, インデントの深さはあなたの好みで選択できます。マークアップを入れ子にするには最低1つのスペースによるインデントが必要なだけです。
-
-## ラインインジケータ
-
-### テキスト `|`
-
-パイプを使うと, Slim はパイプよりも深くインデントされた全ての行をコピーします。
-
-~~~ slim
-body
-  p
-    |
-      一行目
-      二行目
-      三行目
-~~~
-
-~~~ html
-<body><p>一行目 二行目 三行目</p></body>
-~~~
-
-改行を入れたい場合、次のように書けます。
-
-~~~ slim
-body
-  p
-    | 一行目
-    br
-    | 二行目
-    br
-    | 三行目
-~~~
-
-~~~ html
-<body><p>一行目<br>二行目<br>三行目</p></body>
-~~~
-
-### インライン html `<` (HTML 形式)
-
-HTML タグを直接 Slim の中に書くことができます。Slim では, 閉じタグを使った HTML タグ形式や HTML と Slim を混ぜてテンプレートの中に書くことができます。
-
-~~~ slim
-<html>
-  head
-    title Example
-  <body>
-    - if articles.empty?
-    - else
-      table
-        - articles.each do |a|
-          <tr><td>#{a.name}</td><td>#{a.description}</td></tr>
-  </body>
-</html>
-~~~
-
-### 制御コード `-`
-
-ダッシュは制御コードを意味します。制御コードの例としてループと条件文があります。`end` は `-` の後ろに置くことができません。ブロックはインデントによってのみ定義されます。
-複数行にわたる Ruby のコードが必要な場合, 行末にバックスラッシュ `\` を追加します。
-
-~~~ slim
-body
-  - if articles.empty?
-    | 在庫なし
-~~~
-
-### 出力 `=`
-
-イコールはバッファに追加する出力を生成する Ruby コードの呼び出しを Slim に命令します。Ruby のコードが複数行にわたる場合, 例のように行末にバックスラッシュを追加します。
-
-~~~ slim
-= javascript_include_tag \
-   "jquery",
-   "application"
-~~~
-
-行末・行頭にスペースを追加するために修飾子の `>` や `<` がサポートされています。
-
-* `=>` は末尾のスペースを伴った出力をします。 末尾のスペースが追加されることを除いて, 単一の等合 (`=`) と同じです。
-* `=<` は先頭のスペースを伴った出力をします。先頭のスペースが追加されることを除いて, 単一の等号 (`=`) と同じです。
-
-### HTML エスケープを伴わない出力 `==`
-
-単一のイコール (`=`) と同じですが, `escape_html` メソッドを経由しません。 末尾や先頭のスペースを追加するための修飾子 `>` と `<` はサポートされています。
-
-* `==>` は HTML エスケープを行わずに, 末尾のスペースを伴った出力をします。末尾のスペースが追加されることを除いて, 二重等号 (`==`) と同じです。
-* `==<` は HTML エスケープを行わずに, 先頭のスペースを伴った出力をします。先頭のスペースが追加されることを除いて, 二重等号 (`==`) と同じです。
-
-### コードコメント `/`
-
-コードコメントにはスラッシュを使います。スラッシュ以降は最終的なレンダリング結果に表示されません。コードコメントには `/` を, html コメントには `/!` を使います。
-
-~~~ slim
-body
-  p
-    / この行は表示されません。
-      この行も表示されません。
-    /! html コメントとして表示されます。
-~~~
-
-  構文解析結果は以下:
-
-~~~ html
-<body><p><!--html コメントとして表示されます。--></p></body>
-~~~
-
-### HTML コメント `/!`
-
-html コメントにはスラッシュの直後にエクスクラメーションマークを使います (`<!-- ... -->`)。
-
-## HTML タグ
-
-### <!DOCTYPE> 宣言
-
-doctype キーワードでは, とても簡単な方法で複雑な DOCTYPE を生成できます。
-
-~~~ slim
-doctype html
-~~~
-
-~~~ html
-<!DOCTYPE html>
-~~~
-
-### 行頭・行末にスペースを追加する (`<`, `>`)
-
-a タグの後に > を追加することで末尾にスペースを追加するよう Slim に強制することができます。
-
-~~~ slim
-a> href='url1' リンク1
-a> href='url2' リンク2
-~~~
-
-< を追加することで先頭にスペースを追加できます。
-
-~~~ slim
-a< href='url1' リンク1
-a< href='url2' リンク2
-~~~
-
-これらを組み合わせて使うこともできます。
-
-~~~ slim
-a<> href='url1' リンク1
-~~~
-
-### インラインタグ
-
-タグをよりコンパクトにインラインにしたくなることがあるかもしれません。
-
-~~~ slim
-ul
-  li.first: a href="/a" A リンク
-  li: a href="/b" B リンク
-~~~
-
-可読性のために, 属性を囲むことができるのを忘れないでください。
-
-~~~ slim
-ul
-  li.first: a[href="/a"] A リンク
-  li: a[href="/b"] B リンク
-~~~
-
-### テキストコンテンツ
-
-タグと同じ行で開始するか、入れ子にするか、どちらかを選択できます。
-
-~~~ slim
-body
-  h1 id="headline" 私のサイトへようこそ。
-~~~
-
-~~~ slim
-body
-  h1 id="headline"
-    | 私のサイトへようこそ。
-~~~
-
-### 動的コンテンツ (`=` と `==`)
-
-同じ行で呼び出すか、入れ子にすることができます。
-Rubyコードにより、page_headline を定義している場合に使います。
-
-~~~ slim
-body
-  h1 id="headline" = page_headline
-~~~
-
-~~~ slim
-body
-  h1 id="headline"
-    = page_headline
-~~~
-
-### 属性
-
-タグの後に直接属性を書きます。通常の属性記述にはダブルクォート `"` か シングルクォート `'` を使わなければなりません (引用符で囲まれた属性)。
-
-~~~ slim
-a href="http://slim-lang.com" title='Slim のホームページ' Slim のホームページへ
-~~~
-
-引用符で囲まれたテキストを属性として使えます。
-
-#### 属性の囲み
-
-区切り文字が構文を読みやすくするのであれば,
-`{...}`, `(...)`, `[...]` で属性を囲むことができます。
-
-~~~ slim
-body
-  h1(id="logo") = page_logo
-  h2[id="tagline" class="small tagline"] = page_tagline
-~~~
-
-属性を囲んだ場合, 属性を複数行にわたって書くことができます:
-
-~~~ slim
-h2[id="tagline"
-   class="small tagline"] = page_tagline
-~~~
-
-#### 引用符で囲まれた属性
-
-例:
-
-~~~ slim
-a href="http://slim-lang.com" title='Slim のホームページ' Slim のホームページへ
-~~~
-
-引用符で囲まれたテキストを属性として使えます:
-
-~~~ slim
-a href="http://#{url}" #{url} へ
-~~~
-
-#### Ruby コードを用いた属性
-
-`=` の後に直接 Ruby コードを書きます。コードにスペースが含まれる場合,
-`(...)` の括弧でコードを囲まなければなりません。ハッシュを `{...}` に, 配列を `[...]` に書くこともできます。
-
-~~~ slim
-body
-  table
-    - for user in users
-      td id="user_#{user.id}" class=user.role
-        a href=user_action(user, :edit) Edit #{user.name}
-        a href=(path_to_user user) = user.name
-~~~
-
-#### 真偽値属性
-
-属性値の `true`, `false` や `nil` は真偽値として
-評価されます。属性を括弧で囲む場合, 属性値の指定を省略することができます。
-
-~~~ slim
-input type="text" disabled="disabled"
-input type="text" disabled=true
-input(type="text" disabled)
-
-input type="text"
-input type="text" disabled=false
-input type="text" disabled=nil
-~~~
-
-### ショートカット
-
-#### ID ショートカット `#` と class ショートカット `.`
-
-`id` と `class` の属性を次のショートカットで指定できます。
-
-~~~ slim
-body
-  h1#headline
-    = page_headline
-  h2#tagline.small.tagline
-    = page_tagline
-  .content
-    = show_content
-~~~
-
-これは次に同じです
-
-~~~ slim
-body
-  h1 id="headline"
-    = page_headline
-  h2 id="tagline" class="small tagline"
-    = page_tagline
-  div class="content"
-    = show_content
-~~~
-
-#### タグショートカット
-
-`:shortcut` オプションを設定することで独自のタグショートカットを定義できます。Rails アプリケーションでは, `config/initializers/slim.rb` のようなイニシャライザに定義します。Middleman アプリでは, ```config.rb``` の中に以下を記述します。
-
-~~~ ruby
-Slim::Engine.set_options shortcut: {'c' => {tag: 'container'}, '#' => {attr: 'id'}, '.' => {attr: 'class'} }
-~~~
-
-Slim コードの中でこの様に使用できます。
-
-~~~ slim
-c.content テキスト
-~~~
-
-レンダリング結果
-
-~~~ html
-<container class="content">テキスト</container>
-~~~
-
-#### 属性のショートカット
-
-カスタムショートカットを定義することができます (id の`#` , class の `.` のように)。
-
-例として, type 属性付きの input 要素のショートカット `&` を追加します。
-
-~~~ ruby
-Slim::Engine.set_options shortcut: {'&' => {tag: 'input', attr: 'type'}, '#' => {attr: 'id'}, '.' => {attr: 'class'}}
-~~~
-
-Slim コードの中でこの様に使用できます。
-
-~~~ slim
-&text name="user"
-&password name="pw"
-&submit
-~~~
-
-レンダリング結果
-
-~~~ html
-<input type="text" name="user" />
-<input type="password" name="pw" />
-<input type="submit" />
-~~~
-
-別の例として, role 属性のショートカット `@` を追加します。
-
-~~~ ruby
-Slim::Engine.set_options shortcut: {'@' => 'role', '#' => 'id', '.' => 'class'}
-~~~
-
-Slim コードの中でこの様に使用できます。
-
-~~~ slim
-.person@admin = person.name
-~~~
-
-レンダリング結果
-
-~~~ html
-<div class="person" role="admin">Daniel</div>
-~~~
-
-## テキストの展開
-
-Ruby の標準的な展開方法を使用します。テキストはデフォルトで html エスケープされます。
-
-~~~ slim
-body
-  h1 ようこそ #{current_user.name} ショーへ。
-~~~
-
-## 埋め込みエンジン
-
-slim中に、cssなども記述できます。
-
-例:
-
-~~~ slim
-    css:
-      body: {
-        background: yellow;
-      }
-
-    scss class="myClass":
-      $color: #f00;
-      body { color: $color; }
-
-    markdown:
-      #Header
-        #{"Markdown"} からこんにちは!
-        2行目!
-~~~
-
-レンダリング結果：
-
-~~~ html
-<style type="text/css">body{background: yellow}</style>
-<style class="myClass" type="text/css">body{color:red}</style>
-<h1 id="header">Header</h1>
-<p>Markdown からこんにちは! 2行目!</p>
-~~~
-
-対応エンジン:
-
-| フィルタ    | 必要な gems                  | 種類                | 説明                                                        |
-|:------------|:-----------------------------|:--------------------|:------------------------------------------------------------|
-| ruby:       | なし                         | ショートカット      | Ruby コードを埋め込むショートカット                         |
-| javascript: | なし                         | ショートカット      | javascript コードを埋め込み、script タグで囲む              |
-| css:        | なし                         | ショートカット      | css コードを埋め込み、style タグで囲む                      |
-| scss:       | sass                         | コンパイル時        | scss コードを埋め込み、style タグで囲む                     |
-| markdown:   | redcarpet/rdiscount/kramdown | コンパイル時 + 展開 | Markdown をコンパイルし、テキスト中の # \{variables} を展開 |
-
-## Slim の設定
-
-### デフォルトオプション
-
-通常、slim で生成される html ファイルは、空白等を取り除き、コンパクトに圧縮されています。
-これにより、Webサイトに公開した際の速度改善等を望むことができます。
-そして、デバッグ時には、これを無効化することができます。
-``` Middleman ```アプリケーションでは、``` config.rb ```中に、以下のように記述します。
-
-~~~ ruby
-# デバック用に html をきれいにインデントし属性をソートしない
-Slim::Engine.set_options pretty: true, sort_attrs: false
-~~~
-
-### 構文ハイライト
-
-様々なテキストエディタのためのプラグインがあります。:
-
-* [Atom用language-slimパッケージ](https://github.com/slim-template/language-slim)
-
-### テンプレート変換
-
-#### htmlファイルからslimファイルへ変換
-
-```
-$ html2slim index.html index.html.slim
+[FLOCSSを扱いきれないあなたに贈る、スリムなCSS設計の話 - 鴇田将克](https://webnaut.jp/technology/20170407-2421/)より抜粋・改変
+
+F、L、O、Uの4つに分けよう
+-------------------------------------------------------------------------------
+基本のアーキテクチャとしては、Foundation、Layout、Object、Utilityの4つに分けましょう。
+
+例えばこんな組み方にしたいとき、
+
+それぞれの役割は、図にするとこのようになります。
+（分かりやすくするために一部簡略化しています。）
+
+### Foundation
+
+* リセットCSS、NormarizeCSSなどの、すべてのベースとなるCSS
+* 基本的にコードは追加しない
+* foundation.scssに記述
+
+<figcaption>foundation.scss</figcaption>
+
+```css
+html, body, h1, h2, h3, h4, ul, ol, dl, li, dt, dd, p, div, span, img, a, table, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  letter-spacing: 0.5px;
+  font-weight: normal;
+  font-size: 100%;
+  font-family: "Helvetica Neue",
+               Arial,
+               "Hiragino Kaku Gothic ProN",
+               "Hiragino Sans",
+               Meiryo,
+               sans-serif;
+  vertical-align:baseline;
+  box-sizing: border-box;
+  line-height: 1.8;
+  word-wrap: break-word;
+}
 ```
 
-#### slimファイルからhtmlファイルへ変換
+### Layout
 
+* パーツの配置や、ラッパーとしての幅や高さなどを決定するクラス
+* layout.scssに記述
+
+<figcaption>layout.scss</figcaption>
+
+```css
+.justify-left {
+  display: grid;
+  justify-content: flex-start;
+}
+.justify-right {
+  display: grid;
+  justify-content: flex-end;
+}
+.justify-center {
+  display: grid;
+  justify-content: center;
+}
 ```
-$ slimrb -p index.html.slim > index.html
+
+### Object
+
+* ページをまたいで使われる各種パーツを定義するクラス
+* そのパーツ内で常に同様の振る舞いをするものに関してのみスタイルを定義
+* object.scssに記述
+
+<figcaption>object.scss</figcaption>
+
+```css
+.boxA {
+    width: 100px;
+    height: 100px;
+    color: red;
+}
+.boxB {
+    width: 200px;
+    height: 200px;
+    color: green;
+}
 ```
+
+### Utility
+
+* 調整用のクラス
+* margin、padding、font-size、colorなどを付与するのに使用
+* 他種類のパーツ間の空き調整や、パーツとして認められないような、自由な振る舞いをする要素に対してはこちらのクラスを使用
+* utility.scssに記述
+
+<figcaption>utility.scss</figcaption>
+
+``` css
+.mt10 { margint-top: 10px; }
+.mt20 { margint-top: 20px; }
+.mt30 { margint-top: 30px; }
+```
+
+この設計を、F、L、O、Uの頭文字をとって、ここでは便宜的にFLOUと呼ぶことにします。
+
+
+
+FLOU設計のメリットは？
+-------------------------------------------------------------------------------
+さて、このFLOUの設計を使うとどんなハッピーなことがあるのでしょうか。
+
+### レイアウトが劇的に楽
+まず言えるのが、「モジュールの配置に関していちいちCSSを考える必要がなくなる」ということです。
+Layoutに適切なクラスを用意しておくことによって、モジュール（Object）たちを柔軟に、かつスピーディーに配置していくことが可能になります。
+例えば、css gridを使ったLayoutクラスを使えば、次のように柔軟にモジュールを配置できます。
+
+<figcaption>index.html</figcaption>
+
+``` html
+<div class="justify-left">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+
+<div class="justify-center">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+
+<div class="justify-right">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+
+<div class="justify-left direction-row">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+
+<div class="justify-center direction-row">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+
+<div class="justify-right direction-row">
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+```
+
+<figcaption>layout.scss</figcaption>
+
+``` css
+.justify-left {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+}
+.justify-center {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: center;
+}
+.justify-right {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: end;
+}
+.direction-row {
+    display: grid;
+    grid-auto-flow: row;
+}
+.box {
+  display: inline;
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+  background-color: red;
+}
+```
+
+ここで使っている ```.justify-left``` などのクラスは、子要素に依存しないレイアウトのクラスとなるので、どんなモジュールに対しても使い回すことができます。
+（依存を完全に0にしているわけではありませんが。）
+
+また、配置のためのクラス以外にも、
+
+<figcaption>layout.scss</figcaption>
+
+``` css
+.w25  { width:   25%; }
+.w50  { width:   50%; }
+.w100 { width:  100%; }
+.h25  { height:  25%; }
+.h50  { height:  50%; }
+.h100 { height: 100%; }
+```
+
+のように、ラッパーの幅や高さを指定したりするLayoutクラスを用意しておくのも強力です。
+このように、レイアウトに関する記述をLayoutクラスとして切り出し、使い回すことで、Object内で定義するモジュールを柔軟に配置することができるようになります。
+
+### CSSの見通しが良くなる
+FLOUを使う二つ目の利点として、「ファイル全体の見通しが良くなる」というものがあります。
+例えば、
+
+<figcaption>object.scss</figcaption>
+
+``` css
+.boxA {
+    width: 100px;
+    height: 100px;
+    color: #ff0000;
+    margin-top: 20px; /* ←これに注目 */
+}
+.boxB {
+    width: 200px;
+    height: 200px;
+    color: #00ff00;
+    margin-top: 20px; /* ←これに注目 */
+}
+.textA {
+    color: #ff0000;
+    font-weight: bold;
+    margin-top: 20px; /* ←これに注目 */
+}
+```
+
+とするよりは、
+
+<figcaption>utility.scss</figcaption>
+
+```css
+.mt20 {
+  margin-top: 20px; /* ←これに注目 */
+}
+```
+
+<figcaption>object.scss</figcaption>
+
+```css
+.boxA {
+    width: 100px;
+    height: 100px;
+    color: #ff0000;
+}
+.boxB {
+    width: 200px;
+    height: 200px;
+    color: #00ff00;
+}
+.textA {
+    color: #ff0000;
+    font-weight: bold;
+}
+```
+として、各モジュールにhtml上で
+
+```html
+<div class="boxA mt20">
+  boxA
+</div>
+```
+
+のように ```.mt20``` を付与する方が、全体の見通しが良くなります。
+
+ここでは、単に<br>
+** それぞれのモジュールに対する記述が減ったので見やすくなった **<br>
+ということに加えて<br>
+** それぞれのモジュールにとって本質的でない記述が減った **<br>
+ということも重要です。<br>
+
+　上の例で記述されていた ```margin-top: 20px;``` は他のモジュールとの関係を定義するのに必要なだけであって、それぞれのモジュールには直接的には関係がない記述です。
+このように、モジュール自体が他のモジュールとの関係に関するプロパティを持っていると、想定してなかったモジュールの組み合わせによって、「上の空きが大きすぎる」や「横並びになってくれない」などの不具合が生じかねません。<br>
+　一方、FLOUの設計であれば、モジュール（Object）と配置（Layout）、調整（Utility）を分けたことで、<br>
+** モジュールのデザイン修正をしたい場合はObjectクラスをいじって、**<br>
+** 配置に関してはLayoutクラスの変更で対応し、** <br>
+** モジュール間の空きをなど調整したい場合はUtilityクラスを変更すればよい** <br>
+ということになるので、仕様の変更に強くなります。<br>
+　オブジェクトの修正でない、例えばレイアウトの変更や、数px単位の微妙な空き調整なんかは、結局html上でのクラスの付け替え作業になるので、他のページへの影響をケアする必要がなくなるというのも嬉しいところです。
+
+FLOUで書くときのポイントは？
+-------------------------------------------------------------------------------
+FLOUでは、どの粒度でモジュールを切り出していくのかがポイントになってきます。
+理想的な切り出し方は、
+
+* できるだけ小さい単位で切り出す
+* しかし、常にセットで使うものに関しては一つのモジュールにまとめる
+
+というところです。
+
+　例えば、こんな部品を作るとします。
+
+
+　この場合は、フォームとボタンをセットでモジュールとして切り出すのでなく、別々で切り出す方が良いでしょう。
+
+　なぜなら、もし「やっぱりこのページだけはフォームとボタンを縦並びに変更したい」となったときに、セットで切り出していた場合は、<br>
+** 従来の「フォームとボタンが横並びのモジュール」に加えて、 **  <br>
+** 新規の「フォームとボタンを縦並びのモジュール」をCSSファイルに追加する ** <br>
+ということになりますが、別々で切り出していれば、<br>
+** html上で、子要素を横並びにするLayoutクラスから子要素を縦並びにするLayoutクラスに変更する ** <br>
+という対応だけで済み、モジュールのパターン（今回で言う「フォーム」と「ボタン」）をCSS上で増やすことなくデザインが実現できるからです。<br>
+　このように、モジュールはできるだけ小さい単位で管理し、配置に関してはLayoutクラスとUtilityクラスに任せることで、CSSの肥大化を抑えることができるのです。<br>
+　とはいえ、もちろん「このパーツはどんな場面でも一緒に使う」と言い切れるものに関しては、一緒で管理するのが良いでしょう。
+
+まとめ
+-------------------------------------------------------------------------------
+　CSSの設計に関しては、SMACSSやFLOCSSなどのオブジェクト指向の設計に従うことで、メンテナンス性に優れたコードを書くことができます。<br>
+　しかし、どの粒度でオブジェクトを切り出すのか、またオブジェクト以外のクラスはどう扱うかなどはサイトの特性によってまちまちなので、「どんなサイトにでも使える万能な設計手法」というものは存在しません。<br>
+　そんなときは、今回ご紹介したミニマムな設計である「FLOU」をベースに最適解を模索し、自己流の設計としてアレンジしてみてはいかがでしょうか！
